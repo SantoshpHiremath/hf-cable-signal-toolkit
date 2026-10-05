@@ -1,19 +1,15 @@
 # hf-cable-signal-toolkit
 
-A real, tested software-tools project combining transmission-line/RF
-circuit theory, industry-standard S-parameter file I/O, and digital
-signal processing — built to close a specific gap identified against
-LEONI Kabel GmbH's "Werkstudent Elektrotechnik/Informatik –
-Hochfrequenz-Technik & Software-Tools" posting: "Interesse an
-HF-Technik, Signalverarbeitung oder Messtechnik" and, concretely,
-"Entwicklung von Software-Tools im Bereich Hochfrequenz-Technik...
-Implementierung und Optimierung von Algorithmen zur
-Signalverarbeitung." No prior project in this portfolio touched RF/HF
-concepts or Touchstone-format S-parameter data at all.
+A tested software-tools project combining transmission-line/RF circuit
+theory, industry-standard S-parameter file I/O, and digital signal
+processing. It covers the software side of high-frequency (HF) cable
+work: modeling a cable, reading and writing Touchstone measurement
+files, analyzing S-parameters against a specification, and designing and
+applying signal-processing filters.
 
-## What this is (read before citing anywhere)
+## What it contains
 
-Two related but distinct capabilities, both real:
+Two related but distinct capabilities:
 
 **A. Cable transmission-line modeling + Touchstone I/O + S-parameter
 analysis** (`src/transmission_line.py`, `src/touchstone.py`,
@@ -35,8 +31,7 @@ analysis** (`src/transmission_line.py`, `src/touchstone.py`,
   re-read data matches the original to floating-point precision.
 - `sparam_analysis.py` computes return loss, VSWR, and insertion loss
   from S-parameters, and a band-limited summary/pass-fail report
-  against a return-loss specification — the "Analyse und Auswertung
-  von Messdaten" layer.
+  against a return-loss specification — the measurement-data analysis layer.
 
 **B. Digital filter design + real, measured noise reduction**
 (`src/filter_design.py`):
@@ -64,37 +59,28 @@ fidelity, S-parameter analysis against hand-computed values, and
 filter design/application against scipy's own reference computations
 and a directly-measured SNR improvement.
 
-## Honest disclosures — what's real, what's substituted, and why
+## Scope
 
 **No real RF hardware, VNA, or lab measurement is involved anywhere in
-this project — this is the central thing to understand before citing
-it.** There is no vector network analyzer, spectrum analyzer, or any
-physical HF test equipment reachable in this sandbox, and this project
-does not claim otherwise. Every S-parameter value in this project is
-*computed* from `CableModel`'s real, closed-form transmission-line
-equations for a chosen (named, disclosed) cable geometry and load —
-physically correct math, not a real cable's measured behavior. This is
-a genuine, real gap against the posting's core subject matter (HF
-technology specifically), disclosed directly rather than implied away
-by the surrounding real software work.
+this project.** There is no vector network analyzer, spectrum analyzer,
+or any physical HF test equipment reachable from my sandbox. Every
+S-parameter value in this project is *computed* from `CableModel`'s
+closed-form transmission-line equations for a chosen cable geometry and
+load: physically correct math, not a real cable's measured behavior.
 
-**The cable parameters are a named, illustrative example, not a
-sourced datasheet.** `RG58_LIKE_PARAMS` in `generate_measurement.py`
-is labeled "RG-58-like" because the R/L/G/C values are representative
-of that general class of 50-ohm coax, not transcribed from an actual
-LEONI or RG-58 datasheet.
+**The cable parameters are a named, illustrative example, not a sourced
+datasheet.** `RG58_LIKE_PARAMS` in `generate_measurement.py` is labeled
+"RG-58-like" because the R/L/G/C values are representative of that
+general class of 50-ohm coax, not transcribed from an actual datasheet.
 
-**What this project actually demonstrates.** The Touchstone
-reader/writer is genuinely spec-compliant and would work unmodified on
-a file exported by real RF measurement equipment — that part transfers
-directly to a real lab environment. The transmission-line math is real
+**What transfers to real work.** The Touchstone reader/writer is
+spec-compliant and would work unmodified on a file exported by real RF
+measurement equipment. The transmission-line math is real
 electromagnetics, verified against textbook closed-form results. The
-filter-design and SNR-measurement work is real, general-purpose DSP,
-not RF-specific, but it is a genuine, tested implementation of exactly
-the algorithm-implementation-and-optimization skill the posting names.
-What it does not demonstrate is hands-on experience with real HF
-measurement equipment or a real cable production/test environment —
-that gap is real and is named here rather than glossed over.
+filter-design and SNR-measurement work is general-purpose DSP rather
+than RF-specific, and is a tested implementation of signal-processing
+algorithm design and optimization. The project doesn't involve real HF
+measurement equipment or a cable production or test environment.
 
 ## Sample output (from an actual run of `run_pipeline.py`)
 
@@ -117,16 +103,14 @@ SNR after filtering:  25.13 dB
 Improvement: 23.70 dB
 ```
 
-## Verification performed
+## Testing
 
-- `python -m pytest tests/ -v` — 41/41 tests pass, re-verified fresh
-  in this environment immediately before writing this README.
+- `python -m pytest tests/ -v` — 41/41 tests pass.
 - `python run_pipeline.py` — runs end to end; the "Sample output"
   section above is copied directly from this run's actual stdout,
-  including the genuinely-failing spec check (not edited to look
-  better).
-- Two real bugs were caught and fixed during development, both via
-  genuine test failures rather than hypothetical examples:
+  including the failing spec check (not edited to look better).
+- Two bugs were caught and fixed during development, both via test
+  failures:
   1. `noisy_baseband_measurement()`'s original default noise band
      (a fixed 40-60 kHz range) silently assumed a specific default
      sample rate. Calling it with a different, smaller sample rate
